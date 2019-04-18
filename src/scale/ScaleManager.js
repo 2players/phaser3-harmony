@@ -177,15 +177,6 @@ var ScaleManager = new Class({
     this.gameContainer = null
 
     /**
-     * Is the parent element the browser window?
-     *
-     * @name Phaser.Scale.ScaleManager#parentIsWindow
-     * @type {boolean}
-     * @since 3.16.0
-     */
-    this.parentIsWindow = false
-
-    /**
      * The Parent Size component.
      *
      * @name Phaser.Scale.ScaleManager#parentSize
@@ -510,34 +501,6 @@ var ScaleManager = new Class({
     //  This can often set a height of zero (especially for un-styled divs)
     this.getParentBounds()
 
-    //  If width = '100%', or similar value
-    if (typeof width === 'string') {
-      //  If we have a parent with a height, we'll work it out from that
-      var parentWidth = this.parentSize.width
-
-      if (parentWidth === 0) {
-        parentWidth = window.innerWidth
-      }
-
-      var parentScaleX = parseInt(width, 10) / 100
-
-      width = Math.floor(parentWidth * parentScaleX)
-    }
-
-    //  If height = '100%', or similar value
-    if (typeof height === 'string') {
-      //  If we have a parent with a height, we'll work it out from that
-      var parentHeight = this.parentSize.height
-
-      if (parentHeight === 0) {
-        parentHeight = window.innerHeight
-      }
-
-      var parentScaleY = parseInt(height, 10) / 100
-
-      height = Math.floor(parentHeight * parentScaleY)
-    }
-
     if (autoRound) {
       width = Math.floor(width)
       height = Math.floor(height)
@@ -596,25 +559,13 @@ var ScaleManager = new Class({
     this.gameContainer.style.height = this.gameSize.height + 'px'
 
     this.parent = this.gameContainer.parentNode
-    this.parentIsWindow = this.parent === document.body
 
     if (config.expandParent) {
-      var DOMRect = this.parent.getBoundingClientRect()
-
-      if (this.parentIsWindow || DOMRect.height === 0) {
-        document.documentElement.style.height = '100%'
-        document.body.style.height = '100%'
-
-        DOMRect = this.parent.getBoundingClientRect()
-
-        //  The parent STILL has no height, clearly no CSS
-        //  has been set on it even though we fixed the body :(
-        if (!this.parentIsWindow && DOMRect.height === 0) {
-          this.parent.style.overflow = 'hidden'
-          this.parent.style.width = '100%'
-          this.parent.style.height = '100%'
-        }
-      }
+      document.documentElement.style.height = '100%'
+      document.body.style.height = '100%'
+      this.parent.style.overflow = 'hidden'
+      this.parent.style.width = '100%'
+      this.parent.style.height = '100%'
     }
 
     //  And now get the fullscreenTarget
@@ -641,10 +592,6 @@ var ScaleManager = new Class({
     // Ref. http://msdn.microsoft.com/en-us/library/hh781509(v=vs.85).aspx for getBoundingClientRect
 
     var DOMRect = this.parent.getBoundingClientRect()
-
-    if (this.parentIsWindow && this.game.device.os.iOS) {
-      DOMRect.height = GetInnerHeight(true)
-    }
 
     var resolution = this.resolution
     var newOriginalWidth = DOMRect.width * resolution
