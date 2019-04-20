@@ -22,6 +22,7 @@ class WebFontFile extends Phaser.Loader.File {
 
       const config = {}
       config.custom = { families: [name] }
+      config.timeout = 3600000 // 1 hours
       config.active = this.onLoad.bind(this)
       config.inactive = this.onError.bind(this)
       config.fontactive = this.onFontActive.bind(this)
